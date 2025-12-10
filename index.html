@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Генератор паролів</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #4f46e5, #9333ea);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      color: #fff;
+      margin: 0;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+      max-width: 480px;
+      width: 100%;
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    label {
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    input[type="number"], select {
+      width: 100%;
+      padding: 0.5rem;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+      text-align: center;
+    }
+
+    .password-output {
+      background: rgba(0,0,0,0.3);
+      border-radius: 8px;
+      padding: 0.7rem;
+      font-size: 1.1rem;
+      word-wrap: break-word;
+      margin-bottom: 1rem;
+      transition: background 0.3s;
+    }
+
+    button {
+      background: #22c55e;
+      border: none;
+      color: white;
+      padding: 0.7rem 1.2rem;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: #16a34a;
+    }
+
+    .copy {
+      background: #3b82f6;
+      margin-left: 0.5rem;
+    }
+
+    .copy:hover {
+      background: #2563eb;
+    }
+
+    .highlight {
+      background: rgba(0,255,127,0.4) !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>🔐 Генератор паролів</h1>
+
+    <div class="input-group">
+      <label>Довжина пароля:</label>
+      <input type="number" id="length" value="8" min="4" max="32" />
+    </div>
+
+    <div class="input-group">
+      <label>Складність:</label>
+      <select id="complexity">
+        <option value="1">Тільки літери</option>
+        <option value="2">Літери + цифри</option>
+        <option value="3">Літери + цифри + символи</option>
+        <option value="4">Усі символи (максимальна складність)</option>
+      </select>
+    </div>
+
+    <div class="password-output" id="password">Ваш пароль з’явиться тут</div>
+
+    <button id="generate">Згенерувати</button>
+    <button class="copy" id="copy">Скопіювати</button>
+  </div>
+
+  <script>
+    // Отримуємо елементи
+    const lengthInput = document.getElementById('length');
+    const complexitySelect = document.getElementById('complexity');
+    const generateBtn = document.getElementById('generate');
+    const copyBtn = document.getElementById('copy');
+    const passwordOutput = document.getElementById('password');
+
+    // Генерація пароля
+    generateBtn.addEventListener('click', () => {
+      const length = Number(lengthInput.value);
+      const level = Number(complexitySelect.value);
+
+      // Базовий набір символів
+      let chars = 'abcdefghijklmnopqrstuvwxyz';
+
+      // Додаємо символи залежно від рівня складності
+      if (level >= 2) chars += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+      if (level >= 3) chars += '!@#$%^&*()-_=+[]{};:,.<>?';
+      if (level === 4) chars += '~`|\\/\'"';
+
+      // Генеруємо пароль
+      let password = '';
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * chars.length);
+        password += chars[randomIndex];
+      }
+
+      // Виводимо результат з ефектом підсвічування
+      passwordOutput.textContent = password;
+      passwordOutput.classList.add('highlight');
+      setTimeout(() => passwordOutput.classList.remove('highlight'), 300);
+    });
+
+    // Копіювання пароля
+    copyBtn.addEventListener('click', () => {
+      const password = passwordOutput.textContent;
+      if (password && password !== 'Ваш пароль з’явиться тут') {
+        navigator.clipboard.writeText(password);
+        copyBtn.textContent = '✅ Скопійовано!';
+        setTimeout(() => (copyBtn.textContent = 'Скопіювати'), 1500);
+      }
+    });
+  </script>
+</body>
+</html>
